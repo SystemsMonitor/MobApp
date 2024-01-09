@@ -3,26 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=1">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>Systems Finder</title>
     <link rel="stylesheet" href="loading.css">
 </head>
 <body>
     <div class="loading-area">
-        <span id="textLoad" class="loader glow">Loading...</span>
-        <span class="load_anim1"></span>
-        <span class="load_anim2"></span>
+        <span><a id="textLoad" class="loader glow" href="http://192.168.21.221/MobApp/index.html" onclick="window.location.replace('http://192.168.21.221/MobApp/index.html');" style="text-decoration:none">Loading...</a></span>
+        <span class="load_anim1"><a href="http://192.168.21.221/MobApp/index.html" onclick="window.location.replace('http://192.168.21.221/MobApp/index.html');" style="text-decoration:none"></a></span>
+        <span class="load_anim2"><a href="http://192.168.21.221/MobApp/index.html" onclick="window.location.replace('http://192.168.21.221/MobApp/index.html');" style="text-decoration:none"></a></span>
     </div>
     <script type="text/javascript">
-
         var url = '';
+        function pingURL() {
+            var _isUp = false;
+            var settings = {
+            // Defining the request configuration
+            cache: false,
+            dataType: "jsonp",
+            crossDomain: true,
+            url: "http://192.168.21.221",
+            method: "GET",
+            timeout: 5000,
+            headers: {accept: "application/json", "Access-Control-Allow-Origin": "*",},
+            // Defines the response to be made for certain status codes
+            statusCode: {
+                200: function (response) {
+                _isUp = true;
+                },
+                400: function (response) {
+                _isUp = false;
+                },
+                0: function (response) {
+                _isUp = false;
+                },
+            },
+            };
+            // Sends the request and observes the response
+            $.ajax(settings).done(function (response) {
+            console.log(response);
+            })
+            .fail(function (response) {
+            console.log("Error" + response);
+            });
+            //alert("_isUp= "+_isUp);
+            if(_isUp == true){
+                //alert("local2");
+                url = "http://192.168.21.221/MobApp/index.html";
+                window.location.replace(url);
+            }
+        }//End pingURL()
+
         cpt_ = 0;
         function xhrRequest(){
-            cpt_+=1;
+            console.log("cpt out= "+cpt_);
             console.log(this.status);
 			status = "200";
             //alert(status);
             if(cpt_ > 1){
-                window.location.replace(url);// window.location.replace(url);
+                document.getElementById("textLoad").innerHTML = "Redirect...";
+                console.log("cpt entered= "+cpt_);
+                window.location.replace(url);// window.location.replace(url); window.location.href = url;
             }
         }
         function getReq(url){
@@ -33,8 +76,10 @@
             console.log(oReq);
         }
 
-        var intervalId3 = window.setInterval(function(){
-            fetch('update.json')
+        function update() {
+            cpt_+=1;
+            console.log("cpt update()= "+cpt_);
+            fetch('https://raw.githubusercontent.com/SystemsMonitor/MobApp/main/update.json', {cache:"no-cache"})
                 .then(response => response.json())
                 .then(data => {
                     url = `${data.http}`;
@@ -52,10 +97,23 @@
 		    var status = "404";
             getReq(url);
             if (status=="404"){
+                //alert("local1");
 				console.log(status);
+                //pingURL();
                 //window.location.replace('./DuckHunt/dist/');
 			}
-        }, 4000);
+        }
+
+        var intervalId4 = window.setInterval(function(){
+                update();
+            }, 1000);
+        /*if(cpt_ > 1){
+            var intervalId3 = window.setInterval(function(){
+                alert("4sec");
+                clearInterval(intervalId4);
+                update();
+            }, 4000);
+        }*/
     </script>
 </body> 
 </html>
