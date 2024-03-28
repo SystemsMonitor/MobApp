@@ -3,38 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=1">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>Systems Finder</title>
     <link rel="stylesheet" href="loading.css">
 </head>
 <body>
     <div class="loading-area">
-        <span id="textLoad" class="loader glow">Loading...</span>
-        <span class="load_anim1"></span>
-        <span class="load_anim2"></span>
+        <span><a id="textLoad" class="loader glow" href="http://192.168.21.221/MobApp/index.html" onclick="window.location.replace('http://192.168.21.221/MobApp/index.html');" style="text-decoration:none">Loading...</a></span>
+        <span class="load_anim1"><a href="http://192.168.21.221/MobApp/index.html" onclick="window.location.replace('http://192.168.21.221/MobApp/index.html');" style="text-decoration:none"></a></span>
+        <span class="load_anim2"><a href="http://192.168.21.221/MobApp/index.html" onclick="window.location.replace('http://192.168.21.221/MobApp/index.html');" style="text-decoration:none"></a></span>
     </div>
     <script type="text/javascript">
-
+        fetch('https://raw.githubusercontent.com/SystemsMonitor/MobApp/main/update.json', {cache:"no-cache"})
+            .then(response => response.json())
+            .then(data => {
+            url = `${data.http}`;
+            document.getElementById("textLoad").innerHTML = `${data.time_and_date}`;
+        });
+        
         var url = '';
-        cpt_ = 0;
-        function xhrRequest(){
-            cpt_+=1;
-            console.log(this.status);
-			status = "200";
-            //alert(status);
-            if(cpt_ > 1){
-                window.location.replace(url);// window.location.replace(url);
-            }
-        }
-        function getReq(url){
-            var oReq = new XMLHttpRequest();
-            oReq.addEventListener("load", xhrRequest);
-            oReq.open("GET", url);
-            oReq.send();
-            console.log(oReq);
-        }
 
-        var intervalId3 = window.setInterval(function(){
-            fetch('update.json')
+        function update() {
+            fetch('https://raw.githubusercontent.com/SystemsMonitor/MobApp/main/update.json', {cache:"no-cache"})
                 .then(response => response.json())
                 .then(data => {
                     url = `${data.http}`;
@@ -48,14 +40,18 @@
                         console.log("!=loading...");
                         document.getElementById("textLoad").innerHTML = "Loading...";
                     }
+                    //----added cotunnel
+                    document.getElementById("textLoad").innerHTML = "Redirect...";
+                    window.location.replace(url);
+
+                    //-----
                 });
-		    var status = "404";
-            getReq(url);
-            if (status=="404"){
-				console.log(status);
-                //window.location.replace('./DuckHunt/dist/');
-			}
-        }, 4000);
+        }
+
+        var intervalId4 = window.setInterval(function(){
+                update();
+            }, 4000);
+       
     </script>
 </body> 
 </html>
